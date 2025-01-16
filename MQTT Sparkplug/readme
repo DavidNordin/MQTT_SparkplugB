@@ -1,0 +1,63 @@
+Key Requirements for Sparkplug B Compliance
+Topic Structure
+
+Sparkplug B requires a specific topic structure:
+spBv1.0/{group_id}/{message_type}/{edge_node_id}/{device_id}
+Example: spBv1.0/MyGroup/NBIRTH/MyEdge/MyDevice
+Payload Structure
+
+Sparkplug B uses a binary-encoded payload format based on Google Protocol Buffers (Protobuf).
+You’ll need to:
+Serialize data into a Sparkplug-compatible Protobuf payload.
+Decode incoming Sparkplug payloads.
+Birth and Death Certificates
+
+Birth messages (NBIRTH/DBIRTH) signal a new edge node or device is online.
+Death messages (NDEATH/DDEATH) signal they are offline.
+These messages must conform to the Sparkplug specification.
+
+To work with Protobuf and MQTT, you’ll need the following Python libraries:
+paho-mqtt protobuf sparkplug
+
+Usage Examples
+1. Building a Node Birth (NBIRTH) Topic
+python
+Kopiera kod
+group_id = "MyGroup"
+message_type = "NBIRTH"
+edge_node_id = "MyEdge"
+
+topic = build_sparkplug_topic(group_id, message_type, edge_node_id)
+print(topic)
+# Output: spBv1.0/MyGroup/NBIRTH/MyEdge
+2. Building a Device Birth (DBIRTH) Topic
+python
+Kopiera kod
+group_id = "MyGroup"
+message_type = "DBIRTH"
+edge_node_id = "MyEdge"
+device_id = "MyDevice"
+
+topic = build_sparkplug_topic(group_id, message_type, edge_node_id, device_id)
+print(topic)
+# Output: spBv1.0/MyGroup/DBIRTH/MyEdge/MyDevice
+3. Handling Invalid Input
+python
+Kopiera kod
+try:
+    invalid_topic = build_sparkplug_topic("MyGroup", "INVALID_TYPE", "MyEdge")
+except ValueError as e:
+    print(e)
+# Output: Invalid message type: INVALID_TYPE. Valid types are: {'NBIRTH', 'NDEATH', 'DBIRTH', '
+
+How It Works
+Validation:
+
+Ensures the group_id, message_type, edge_node_id, and device_id follow Sparkplug B requirements.
+Checks the message_type against a set of valid types.
+Dynamic Construction:
+
+Builds the topic string based on whether a device_id is provided.
+Error Handling:
+
+Raises a ValueError if any input is invalid.
